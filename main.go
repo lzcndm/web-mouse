@@ -96,6 +96,8 @@ func MoveMouse() {
 func main() {
 	http.HandleFunc("/", serveIndex)
 	http.HandleFunc("/server", serveMoveTo)
+	fsh := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fsh))
 	go MoveMouse()
 	log.Fatal(http.ListenAndServe(":8091", nil))
 }
@@ -148,7 +150,9 @@ var tpl = template.Must(template.New("").Parse(`
 
     </div>
 </body>
+<script src="static/vconsole.min.js"></script>
 <script>
+	var vConsole = new VConsole()
     let body = document.getElementById("poi")
     let preX = preY = 0
     let ws = new WebSocket("{{.}}")
