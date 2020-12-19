@@ -43,7 +43,7 @@ func serveIndex(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	tpl.Execute(w, "ws://"+serverIP+"/server")
+	tpl.Execute(w, "ws://"+serverIP+":8091/server")
 }
 
 func serveMoveTo(w http.ResponseWriter, r *http.Request) {
