@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #body {
+        margin: 0;
+        height: 100vh;
+    }
+    #poi {
+        width: 80vw;
+        height: 80vh;
+        margin: 0 auto;
+        background-color: yellow;
+    }
+</style>
+<body id="body">
+    <div id="poi">
+
+    </div>
+</body>
+<script>
+    let body = document.getElementById("poi")
+    let preX = preY = 0
+    let ws = new WebSocket("ws://192.168.11.185:8091/server")
+    body.addEventListener('touchstart', (e) => {
+        let touch = e.touches[0]
+        preX = touch.pageX
+        preY = touch.pageY
+        console.log('start')
+    },false)
+    body.addEventListener('touchmove', (e) => {
+        e.preventDefault()
+        let touch = e.touches[0]
+        let trendX = touch.pageX - preX
+        let trendY = touch.pageY - preY
+        preX = touch.pageX
+        preY = touch.pageY
+        ws.send(JSON.stringify({
+            x: Number(trendX.toFixed()),
+            y: Number(trendY.toFixed())
+        }))
+    },false)
+    body.addEventListener('touchend', (e) => {
+        let touch = e.touches[0]
+        console.log('end',touch)
+    },false)
+    body.addEventListener('click', () => {
+        ws.send(JSON.stringify({
+            type: 1
+        }))
+    }, false)
+    body.addEventListener('dbclick', () => {
+        console.log('dbclick')
+    }, false)
+</script>
+</html>
