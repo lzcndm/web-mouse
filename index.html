@@ -27,6 +27,16 @@
     let body = document.getElementById("poi")
     let preX = preY = 0
     let ws = new WebSocket("ws://192.168.11.185:8091/server")
+    ws.onclose = () => {
+        console.log("close")
+    }
+    ws.onerror = (e) => {
+        console.log("error")
+        console.log(e)
+    }
+    ws.onopen = () => {
+        console.log("open")
+    }
     body.addEventListener('touchstart', (e) => {
         let touch = e.touches[0]
         preX = touch.pageX

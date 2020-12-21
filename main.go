@@ -94,12 +94,13 @@ func MoveMouse() {
 }
 
 func main() {
-	http.HandleFunc("/", serveIndex)
-	http.HandleFunc("/server", serveMoveTo)
-	fsh := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fsh))
-	go MoveMouse()
-	log.Fatal(http.ListenAndServe(":8091", nil))
+	// http.HandleFunc("/", serveIndex)
+	// http.HandleFunc("/server", serveMoveTo)
+	// fsh := http.FileServer(http.Dir("static"))
+	// http.Handle("/static/", http.StripPrefix("/static/", fsh))
+	// go MoveMouse()
+	// log.Fatal(http.ListenAndServe(":8091", nil))
+	getIP()
 }
 
 func getIP() string {
@@ -115,15 +116,15 @@ func getIP() string {
 		// 检查ip地址判断是否回环地址
 		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
+				println(ipnet.IP.String())
 			}
-
+			fmt.Printf("%v\n", ipnet.IP)
 		}
 	}
 	return ""
 }
 
-var serverIP = getIP()
+var serverIP = "192.168.0.104"
 
 var tpl = template.Must(template.New("").Parse(`
 <!DOCTYPE html>
@@ -155,7 +156,17 @@ var tpl = template.Must(template.New("").Parse(`
 	var vConsole = new VConsole()
     let body = document.getElementById("poi")
     let preX = preY = 0
-    let ws = new WebSocket("{{.}}")
+	let ws = new WebSocket("{{.}}")
+	ws.onclose = () => {
+        console.log("close")
+    }
+    ws.onerror = (e) => {
+        console.log("error")
+        console.log(e)
+    }
+    ws.onopen = () => {
+        console.log("open")
+    }
     body.addEventListener('touchstart', (e) => {
         let touch = e.touches[0]
         preX = touch.pageX
